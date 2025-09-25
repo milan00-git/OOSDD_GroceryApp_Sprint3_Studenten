@@ -38,7 +38,7 @@ namespace Grocery.App.ViewModels
             // Checkt of de parameter een lege string is of niet
             string query = (string)(parameter ?? string.Empty);
 
-            // Eerst de AvailableProducts leegmaken
+            // Eerst de AvailableProducts leegmaken als er word getypt in de zoekbalk
             AvailableProducts.Clear();
 
             // Loop over de producten door gebruik te maken van de .GetAll() functie
