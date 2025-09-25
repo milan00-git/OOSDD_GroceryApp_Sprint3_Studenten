@@ -18,6 +18,7 @@ namespace Grocery.App.ViewModels
         
         public ObservableCollection<GroceryListItem> MyGroceryListItems { get; set; } = [];
         public ObservableCollection<Product> AvailableProducts { get; set; } = [];
+        public ObservableCollection<GroceryListItem> SearchBoodschappenLijstItems { get; set; } = new();
 
         [ObservableProperty]
         GroceryList groceryList = new(0, "None", DateOnly.MinValue, "", 0);
@@ -42,31 +43,20 @@ namespace Grocery.App.ViewModels
                 query = (string)parameter;
             }
 
-            AvailableProducts.Clear();
+            SearchBoodschappenLijstItems.Clear();
 
             foreach (var item in MyGroceryListItems)
             {
-                Product p = null; 
+                var product = _productService.GetAll().FirstOrDefault(p => p.Id == item.ProductId);
 
-                foreach (Product prod in _productService.GetAll())
-                {
-                    if (prod.Id == item.ProductId)
-                    {
-                        p = prod;
-                        break;  // stoppen als het gevonden is
-                    }
-                }
+                if (product == null) continue;
 
-                // Als het product niet gevonden is of het is niet op voorraad, overslaan.
-                if (p == null || p.Stock <= 0) continue;
-
-                if (string.IsNullOrWhiteSpace(query))
+                // filter
+                if (string.IsNullOrWhiteSpace(query) ||
+                    (product.Name != null && product.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0))
                 {
-                    AvailableProducts.Add(p);
-                }
-                else if (p.Name != null && p.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    AvailableProducts.Add(p);
+                    // belangrijk: het bestaande GroceryListItem toevoegen
+                    SearchBoodschappenLijstItems.Add(item);
                 }
             }
         }
@@ -76,6 +66,10 @@ namespace Grocery.App.ViewModels
             MyGroceryListItems.Clear();
             foreach (var item in _groceryListItemsService.GetAllOnGroceryListId(id)) MyGroceryListItems.Add(item);
             GetAvailableProducts();
+
+            SearchBoodschappenLijstItems.Clear();
+            foreach (var item in MyGroceryListItems)
+                SearchBoodschappenLijstItems.Add(item);
         }
 
         private void GetAvailableProducts()
@@ -106,6 +100,10 @@ namespace Grocery.App.ViewModels
             product.Stock--;
             _productService.Update(product);
             AvailableProducts.Remove(product);
+
+            // Het GroceryListItem toevoegen aan de zoeklijst zodat het direct zichtbaar is
+            SearchBoodschappenLijstItems.Add(item);
+
             OnGroceryListChanged(GroceryList);
         }
 
