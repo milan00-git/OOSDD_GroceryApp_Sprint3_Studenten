@@ -32,6 +32,45 @@ namespace Grocery.App.ViewModels
             Load(groceryList.Id);
         }
 
+        [RelayCommand]  // Maakt onderwater een ICommand property aan voor 'SearchBoodschappenlijst'
+        public void SearchBoodschappenlijst(object parameter)
+        {
+            // Parameter (de zoek opdracht) omzetten naar string
+            string query = "";
+            if (parameter != null)
+            {
+                query = (string)parameter;
+            }
+
+            AvailableProducts.Clear();
+
+            foreach (var item in MyGroceryListItems)
+            {
+                Product p = null; 
+
+                foreach (Product prod in _productService.GetAll())
+                {
+                    if (prod.Id == item.ProductId)
+                    {
+                        p = prod;
+                        break;  // stoppen als het gevonden is
+                    }
+                }
+
+                // Als het product niet gevonden is of het is niet op voorraad, overslaan.
+                if (p == null || p.Stock <= 0) continue;
+
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    AvailableProducts.Add(p);
+                }
+                else if (p.Name != null && p.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    AvailableProducts.Add(p);
+                }
+            }
+        }
+
         private void Load(int id)
         {
             MyGroceryListItems.Clear();
