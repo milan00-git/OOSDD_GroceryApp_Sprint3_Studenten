@@ -25,6 +25,23 @@ namespace Grocery.App.ViewModels
         [ObservableProperty]
         string myMessage;
 
+
+        private string _emptyMessage = "Er zijn geen producten meer om toe te voegen";
+
+        // Property voor binding label in 'GroceryListItemsView.xaml'
+        public string EmptyMessage
+        {
+            get { return _emptyMessage; }
+            set
+            {
+                if (_emptyMessage != value)
+                {
+                    _emptyMessage = value;
+                    OnPropertyChanged(nameof(EmptyMessage));
+                }
+            }
+        }
+
         public GroceryListItemsViewModel(IGroceryListItemsService groceryListItemsService, IProductService productService, IFileSaverService fileSaverService)
         {
             _groceryListItemsService = groceryListItemsService;
@@ -59,7 +76,47 @@ namespace Grocery.App.ViewModels
                     SearchBoodschappenLijstItems.Add(item);
                 }
             }
+
+        [RelayCommand]
+        public void PerformSearch(object parameter)
+        {
+            // Checkt of de parameter een lege string is of niet
+            string query = (string)(parameter ?? string.Empty);
+
+            // Eerst de AvailableProducts leegmaken als er word getypt in de zoekbalk
+            AvailableProducts.Clear();
+
+            // Loop over de producten door gebruik te maken van de .GetAll() functie
+            foreach (Product p in _productService.GetAll())
+            {
+                // Kijkt of het product niet op de lijst staat, zo wel dat door naar de volgende if statement
+                bool notOnList = MyGroceryListItems.FirstOrDefault(g => g.ProductId == p.Id) == null;
+                if (!notOnList || p.Stock <= 0) continue;
+
+                // kijkt of het product aanwezig is, zo ja toevoegen aan 'AvailableProducts'
+                if (string.IsNullOrWhiteSpace(query) ||
+                    (p.Name != null && p.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0))
+                {
+                    AvailableProducts.Add(p);
+                }
+            }
+
+            if (AvailableProducts.Count == 0)
+            {   
+                // Als er niks is ingevoerd in de searchbar veranderd het bericht dan als een product niet is gevonden
+                if (string.IsNullOrWhiteSpace(query))
+                    EmptyMessage = "Er zijn geen producten meer om toe te voegen";
+                else
+                    EmptyMessage = "Producten zijn niet gevonden";
+            }
+            else
+            {
+                EmptyMessage = ""; // leeg maken als er resultaten zijn
+            }
+
         }
+        
+        
 
         private void Load(int id)
         {
