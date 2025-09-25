@@ -32,7 +32,7 @@
                            SearchCommand="{Binding SearchBoodschappenlijstCommand}" 
                            SearchCommandParameter="{Binding Text, Source={x:Reference GrocerySearchBar}}" />
 
-                <CollectionView ItemsSource="{Binding MyGroceryListItems}" Margin="20" HorizontalOptions="Center" EmptyView="De boodschappenlijst is nog leeg. Voeg eerst boodschappen toe!">
+                <CollectionView ItemsSource="{Binding SearchBoodschappenLijstItems}" Margin="20" HorizontalOptions="Center" EmptyView="De boodschappenlijst is nog leeg. Voeg eerst boodschappen toe!">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
                     </CollectionView.ItemsLayout>
