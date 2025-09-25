@@ -76,6 +76,7 @@ namespace Grocery.App.ViewModels
                     SearchBoodschappenLijstItems.Add(item);
                 }
             }
+        }
 
         [RelayCommand]
         public void PerformSearch(object parameter)
@@ -115,8 +116,6 @@ namespace Grocery.App.ViewModels
             }
 
         }
-        
-        
 
         private void Load(int id)
         {
