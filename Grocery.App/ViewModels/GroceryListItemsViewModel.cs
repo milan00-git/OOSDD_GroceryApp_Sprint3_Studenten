@@ -24,6 +24,23 @@ namespace Grocery.App.ViewModels
         [ObservableProperty]
         string myMessage;
 
+
+        private string _emptyMessage = "Er zijn geen producten meer om toe te voegen";
+
+        // Property voor binding label in 'GroceryListItemsView.xaml'
+        public string EmptyMessage
+        {
+            get { return _emptyMessage; }
+            set
+            {
+                if (_emptyMessage != value)
+                {
+                    _emptyMessage = value;
+                    OnPropertyChanged(nameof(EmptyMessage));
+                }
+            }
+        }
+
         public GroceryListItemsViewModel(IGroceryListItemsService groceryListItemsService, IProductService productService, IFileSaverService fileSaverService)
         {
             _groceryListItemsService = groceryListItemsService;
@@ -54,6 +71,19 @@ namespace Grocery.App.ViewModels
                 {
                     AvailableProducts.Add(p);
                 }
+            }
+
+            if (AvailableProducts.Count == 0)
+            {   
+                // Als er niks is ingevoerd in de searchbar veranderd het bericht dan als een product niet is gevonden
+                if (string.IsNullOrWhiteSpace(query))
+                    EmptyMessage = "Er zijn geen producten meer om toe te voegen";
+                else
+                    EmptyMessage = "Producten zijn niet gevonden";
+            }
+            else
+            {
+                EmptyMessage = ""; // leeg maken als er resultaten zijn
             }
         }
 
