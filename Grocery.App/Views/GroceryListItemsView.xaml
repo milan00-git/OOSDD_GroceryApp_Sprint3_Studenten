@@ -11,7 +11,7 @@
         <ToolbarItem Text="Wijzig kleur" Command="{Binding ChangeColorCommand}" IconImageSource="{FontImage Glyph='&#xf30c;', Color=Black, Size=22}" />
         <ToolbarItem Text="Deel boodschappenlijst" Command="{Binding ShareGroceryListCommand}" IconImageSource="{FontImage Glyph='&#xf30c;', Color=Black, Size=22}" />
     </ContentPage.ToolbarItems>
-    
+
     <Shell.TitleView>
         <Grid>
             <Label Text="{Binding GroceryList.Name}" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
@@ -24,36 +24,50 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0" Stroke="#C49B33" StrokeThickness="4" Padding="10" Margin="10" HorizontalOptions="Center">
-            <CollectionView ItemsSource="{Binding MyGroceryListItems}" Margin="20" HorizontalOptions="Center" EmptyView="De boodschappenlijst is nog leeg. Voeg eerst boodschappen toe!">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
-                </CollectionView.ItemsLayout>
+            <VerticalStackLayout Spacing="10">
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="m:GroceryListItem">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="4*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="20"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Text="{Binding Product.Name}" VerticalOptions="Center"/>
-                            <Label Grid.Column="1" Text="{Binding Amount}" VerticalOptions="Center" HorizontalOptions="End" Margin="0,0,10,0"/>
-                            <Grid Grid.Column="2">
-                                <Image Source="plus.png" WidthRequest="15" HeightRequest="15"/>
+                <SearchBar x:Name="GrocerySearchBar" 
+                           Placeholder="zoek in boodschappenlijst..."
+                           Margin="0,0,0,10" 
+                           SearchCommand="{Binding SearchBoodschappenlijstCommand}" 
+                           SearchCommandParameter="{Binding Text, Source={x:Reference GrocerySearchBar}}" />
+
+                <CollectionView ItemsSource="{Binding SearchBoodschappenLijstItems}" Margin="20" HorizontalOptions="Center" EmptyView="De boodschappenlijst is nog leeg. Voeg eerst boodschappen toe!">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="m:GroceryListItem">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="4*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="20"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="{Binding Product.Name}" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="{Binding Amount}" VerticalOptions="Center" HorizontalOptions="End" Margin="0,0,10,0"/>
+                                <Grid Grid.Column="2">
+                                    <Image Source="plus.png" WidthRequest="15" HeightRequest="15"/>
+                                </Grid>
+                                <Grid Grid.Column="3">
+                                    <Image Source="min.png" WidthRequest="15" HeightRequest="15"/>
+                                </Grid>
                             </Grid>
-                            <Grid Grid.Column="3">
-                                <Image Source="min.png" WidthRequest="15" HeightRequest="15"/>
-                            </Grid>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
         </Border>
 
         <Border Grid.Row="1" Grid.Column="1" Stroke="#C49B33" StrokeThickness="4" Padding="5" Margin="5" HorizontalOptions="Center">
             <StackLayout>
+                
+                <SearchBar x:Name="ProductSearchBar" 
+                           SearchCommand="{Binding PerformSearchCommand}" 
+                           SearchCommandParameter="{Binding Text, Source={x:Reference ProductSearchBar}}" />
+                
                 <CollectionView ItemsSource="{Binding AvailableProducts}" Margin="5" WidthRequest="300" HorizontalOptions="Start"
                     SelectionMode="Single"
                     SelectionChangedCommand="{Binding AddProductCommand}"
@@ -63,7 +77,7 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="m:Product">
-                            <Grid>
+                            <Grid> 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="*"/>
@@ -76,7 +90,9 @@
                     <CollectionView.EmptyView>
                         <ContentView>
                             <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                                <Label Text="Er zijn geen producten meer om toe te voegen" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                                <Label Text="{Binding EmptyMessage}" 
+                                       FontAttributes="Bold" 
+                                       HorizontalTextAlignment="Center"/>
                             </VerticalStackLayout>
                         </ContentView>
                     </CollectionView.EmptyView>
