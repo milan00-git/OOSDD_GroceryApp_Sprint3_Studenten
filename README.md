@@ -9,10 +9,17 @@ Wat is aangevuld:
 - Voeg boven de tweede CollectionView een zoekveld (SearchBar) in om op producten te kunnen zoeken.  
 - Zorg dat de SearchCommand wordt gebonden aan een functie in het onderliggende ViewModel (GroceryListItemsViewModel) en dat de zoekterm die in het zoekveld is ingetypt gebruikt wordt als parameter (SearchCommandParameter).  
 - Werk in het viewModel (GroceryListItemsViewModel) de zoekfunctie uit en zorg dat de beschikbare producten worden gefilterd op de zoekterm!  
+- property, field en een binding naar 'label' in .xaml voor FR2. 
 
 Is compleet
 
 ## UC9 zoeken producten in boodschappenlijst
 
-Aanvullingen: 
-volgt nog...
+Wat is er aanngevuld: 
+
+- Nieuwe functie 'SearchBoodschappenlijst()' met een searchbar voor boodschappenlijst.
+- Aanvulling van load() en AddProduct() die werken op de functie 'SearchBoodschappenlijst()'.
+- Collection toegevoegd voor 'SearchBoodschappenlijst()'.
+- CollectionView binding in .xaml naar 'SearchBoodschappenlijst'.
+
+Is compleet
